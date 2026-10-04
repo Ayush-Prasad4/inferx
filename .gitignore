@@ -22,3 +22,6 @@ htmlcov/
 .vscode/
 
 *.egg-info/
+# Generated model artifacts
+benchmarks/*.onnx
+benchmarks/*.onnx.data
