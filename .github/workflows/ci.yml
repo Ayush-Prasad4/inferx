@@ -1,4 +1,4 @@
-name: InferX CI
+name: InferX CI/CD
 
 on:
   push:
@@ -7,6 +7,10 @@ on:
   pull_request:
     branches:
       - main
+
+permissions:
+  contents: read
+  id-token: write
 
 jobs:
   test:
@@ -30,3 +34,29 @@ jobs:
       - name: Run tests
         run: |
           pytest -q
+
+  docker-ecr:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: arn:aws:iam::886147705214:role/InferXGitHubActionsRole
+          aws-region: eu-central-1
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64
+          push: true
+          tags: 886147705214.dkr.ecr.eu-central-1.amazonaws.com/inferx:amd64
