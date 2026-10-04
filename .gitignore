@@ -25,3 +25,6 @@ htmlcov/
 # Generated model artifacts
 benchmarks/*.onnx
 benchmarks/*.onnx.data
+
+# Generated benchmark reports
+reports/*.json

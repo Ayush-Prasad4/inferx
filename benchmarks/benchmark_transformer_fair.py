@@ -1,3 +1,4 @@
+import json
 import time
 
 import torch
@@ -40,3 +41,15 @@ print(f"P50 latency: {p50:.3f} ms")
 print(f"P95 latency: {p95:.3f} ms")
 print(f"P99 latency: {p99:.3f} ms")
 print(f"Maximum latency: {latencies[-1]:.3f} ms")
+
+report = {
+    "runs": len(latencies),
+    "average_latency_ms": average_latency,
+    "p50_latency_ms": p50,
+    "p95_latency_ms": p95,
+    "p99_latency_ms": p99,
+    "maximum_latency_ms": latencies[-1],
+}
+
+with open("reports/transformer_benchmark.json", "w") as file:
+    json.dump(report, file, indent=2)
